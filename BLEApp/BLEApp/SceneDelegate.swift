@@ -13,10 +13,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+
+        let bleManager = BLEManager()
+        let viewModel = BLEViewModel(bleManager: bleManager)
+        let rootVC = DeviceListViewController(viewModel: viewModel)
+
+        let navController = UINavigationController(rootViewController: rootVC)
+
+        window = UIWindow(windowScene: windowScene)
+        window?.rootViewController = navController
+        window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -50,3 +57,30 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 }
 
+/*
+ Typical BLE RSSI Ranges & Meanings
+ Excellent (Strong): > -60 dBm (e.g., -50 dBm) - Very close, ideal for setup/updates.
+ Good/Fair: -60 dBm to -85 dBm - Relatively close, reliable for data.
+ Weak/Poor: < -85 dBm (e.g., -90 dBm) - Far away, high chance of packet loss, near disconnection.
+ Out of Range: -200 dBm (or similar) - Signal not detected.
+ Key Factors Affecting RSSI
+ Distance: The primary factor; signal strength drops with distance.
+ Obstacles: Walls, furniture, and people block signals.
+ Interference: Other wireless devices, noise, and reflections weaken the signal.
+ Device Hardware: Chipset, antenna design, and transmit power vary between manufacturers.
+ 
+ You now support:
+ ✅ Scan & stop scan
+ ✅ Sort devices by RSSI
+ ✅ Connect / disconnect
+ ✅ Handle disconnect errors
+ ✅ Discover services
+ ✅ Discover characteristics
+ ✅ Read characteristic
+ ✅ Write characteristic
+ ✅ Enable / disable notifications
+ ✅ Receive live data (notify)
+ ✅ Read RSSI
+ ✅ Cache services & characteristics
+ ✅ Fully observable from ViewModel
+ */
